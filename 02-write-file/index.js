@@ -3,22 +3,23 @@ const path = require('path');
 
 const {stdin, stdout} = process;
 
-let file = fs.createWriteStream(path.join(__dirname, 'text.txt'), 'utf8')
-stdout.write('Введите Ваше имя\n');
-//stdin.on('data', data => stdout.write(data));
+let file = fs.createWriteStream(path.join(__dirname, 'text.txt'))
+stdout.write('Введите какой-нибудь текст и нажимайте клавишу Enter.\n');
+stdout.write('Текст построчно запишется в файл text.txt\n');
+stdout.write('По завершении ввода текста введите команду exit или нажмите Ctrl+C\n\n');
+
 
 stdin.on('data', dat => {
-  if (dat == 'exit') process.exit();
-  stdout.write('Привет, ');
-  stdout.write(dat);
-  file.write(dat);
-  stdout.write('!');
-  stdout.write('\n');
-  // process.on('SIGINT', handle);
-  file.end('Заверешение записи');
-  // process.exit();
+  let text = dat.toString().trim();
+  if (text == 'exit') process.exit();
+  file.write(text);
+  file.write('\n');
+  process.on('SIGINT', () => process.exit());
 });
+
+
 process.on('exit', () => {
-  stdout.write('Удачи в изучении Node.js!')
+  file.end('\nЗапись завершена');
+  stdout.write('\nФайл создан, запись завершена. Удачи в изучении Node.js!')
 } ); 
   
