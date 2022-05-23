@@ -18,7 +18,7 @@ async function getFiles(pathToFolder) {
       fileExtname = path.extname(pathToFile).slice(1);
       let stats = await fs.stat(pathToFile);
       fileSize = stats['size'];
-      console.log(fileName + ' - ' + fileExtname + ' - ' + fileSize);
+      console.log(fileName + ' - ' + fileExtname + ' - ' + fileSize + 'bytes');
     }
   }
 }
