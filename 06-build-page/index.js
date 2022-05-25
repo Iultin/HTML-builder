@@ -1,15 +1,9 @@
-let text = `Уважаемый проверяющий, если есть возможность, то проверьте это задание позже! 
-Сегодня после обеда.. 
-Заранее спасибо!`;
-
-console.log(text);
-
 const fs = require('fs');
 const fsPromises = require('fs/promises');
 const path = require('path');
 
 let folderInt = path.join(__dirname, 'assets');
-let folderTo = path.join(__dirname, 'project-dist');
+let folderTo = path.join(__dirname, 'project-dist', 'assets');
 
 let cssInt = path.join(__dirname, 'styles');
 let cssTo = path.join(__dirname, 'project-dist');
@@ -66,6 +60,17 @@ async function createCSS() {
   });
 }
 
+async function createHTML() {
+  let data = await fsPromises.readFile(path.join(__dirname, 'template.html'), 'utf-8');
+  let tempHTML = data.match(/{{\w+}}/g);
+  for (let temp of tempHTML) {
+    let templatePath = path.join(htmlInt, `${temp.slice(2, -2)}.html`);
+    let template = await fsPromises.readFile(templatePath, 'utf-8');
+    // console.log(template);
+    data = data.replace(temp, template);
+  }
+  htmlBundle.write(data);
+}
 
 async function copyFiles(src, dest) {
   await fsPromises.rm(dest, { recursive: true, force: true });
@@ -82,6 +87,7 @@ async function copyFiles(src, dest) {
       cssBundle = await fs.createWriteStream(path.join(cssTo, 'style.css'));
       htmlBundle = fs.createWriteStream(path.join(htmlTo, 'index.html'));
       await createCSS();
+      await createHTML();
     }
   }
 }
