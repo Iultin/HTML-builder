@@ -19,7 +19,8 @@ stdin.on('data', dat => {
 
 
 process.on('exit', () => {
-  file.end('\nЗапись завершена');
+  // file.end('\nЗапись завершена');
+  file.end();
   stdout.write('\nФайл создан, запись завершена. Удачи в изучении Node.js!');
 } ); 
   
