@@ -3,6 +3,7 @@ let text = 'Уважаемый проверяющий, если есть воз�
 console.log(text);
 
 const fs = require('fs');
+const fsPromises = require('fs/promises');
 const path = require('path');
 
 let folderInt = path.join(__dirname, 'assets');
@@ -39,3 +40,20 @@ async function initFolders() {
 }
 initFolders();
 
+async function copyFiles(src, dest) {
+  await fsPromises.rm(dest, {recursive: true, force: true});
+  await fsPromises.mkdir(dest, {recursive: true});
+  const files = await fsPromises.readdir(src, {withFileTypes: true});
+  for (let file of files) {
+    let pathInt = path.join(src, file.name);
+    let pathTo = path.join(dest, file.name);
+    if (file.isDirectory()) {
+      await copyFiles(pathInt, pathTo);
+    }
+    else {
+      await fsPromises.copyFile(pathInt, pathTo);
+    }
+  }
+}
+
+copyFiles(folderInt, folderTo);
